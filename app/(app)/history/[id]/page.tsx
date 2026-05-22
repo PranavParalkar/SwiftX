@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-// TODO(P3): wire to /api/verify-chain and PolygonScan URL
+// TODO(P3): wire to /api/verify-chain
 type Params = Promise<{ id: string }>;
 
 export default async function TransactionDetailPage({
@@ -26,19 +26,16 @@ export default async function TransactionDetailPage({
 
       <Card className="p-5">
         <h2 className="text-sm font-semibold">Hash chain receipt</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          SHA-256 linked to the previous transaction. Tamper-evident.
+        </p>
         <dl className="mt-3 space-y-2 text-xs">
           <Field label="Tx hash" value="4f2c8a1e…b9d3" mono />
           <Field label="Prev hash" value="9a3b71fd…42c8" mono />
-          <Field label="Anchor #" value="12 (Polygon Amoy)" />
+          <Field label="Chain position" value="#42 of 42" />
         </dl>
         <Button asChild variant="outline" size="sm" className="mt-4 w-full">
-          <Link
-            href="https://amoy.polygonscan.com"
-            target="_blank"
-            rel="noreferrer"
-          >
-            View on PolygonScan
-          </Link>
+          <Link href="/chain">Verify in admin chain view</Link>
         </Button>
       </Card>
 

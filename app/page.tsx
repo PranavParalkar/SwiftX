@@ -38,7 +38,7 @@ export default async function LandingPage() {
           </Button>
         </div>
         <p className="mt-10 text-xs text-muted-foreground">
-          Powered by hash-chained ledger, anchored on Polygon.
+          Powered by a SHA-256 hash-chained ledger. Tamper-evident by design.
         </p>
       </div>
     </main>

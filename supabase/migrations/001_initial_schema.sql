@@ -39,7 +39,6 @@ create table if not exists transactions (
   status text not null default 'completed',
   prev_hash text,
   current_hash text,
-  polygon_anchor_tx text,
   created_at timestamptz not null default now()
 );
 
@@ -63,15 +62,6 @@ create table if not exists aml_flags (
   resolved boolean not null default false,
   notes text,
   created_at timestamptz not null default now()
-);
-
-create table if not exists polygon_anchors (
-  id bigserial primary key,
-  chain_hash text not null,
-  polygon_tx_hash text not null,
-  anchored_at timestamptz not null default now(),
-  from_tx_id bigint,
-  to_tx_id bigint
 );
 
 -------------------------------------------------------------------------------
