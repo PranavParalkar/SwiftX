@@ -1,123 +1,106 @@
-# SwiftX - FinTech Financial Inclusion Platform
+# FinTech Wallet — Zero-fee Remittance
 
-SwiftX is a mobile-first financial inclusion platform for zero-fee remittances, multi-currency wallets, and AI-driven financial guidance aimed at migrant workers and underserved users. The demo focuses on instant wallet-to-wallet transfers, transparent FX, and a cryptographically verifiable ledger with optional Polygon anchoring.
+A mobile-first PWA that lets migrant workers send zero-fee remittances to family in India, hold balances in multiple currencies, receive AI-powered financial guidance, and access micro-investment products — built on a transparent, hash-chained ledger with optional Polygon anchoring.
 
-## Problem
-- Cross-border remittances are expensive and slow.
-- Underserved users lack simple, trusted financial tools.
-- Compliance and transparency are often opaque to end users.
+**Hackathon Problem Statement 12** · 24-hour build · team of 4
 
-## Solution Overview
-- Zero-fee wallet-to-wallet remittances with transparent FX spread.
-- Multi-currency balances with pooled liquidity and live FX conversion.
-- AI-powered guidance tailored to the user’s transaction patterns.
-- Hash-chained ledger for tamper-evident records, with optional Polygon anchoring.
+The full implementation plan is in [`docs/implementation.md`](docs/implementation.md).
 
-## Core Demo Persona
-- Sender: Ravi, a construction worker in Dubai (USD wallet).
-- Recipient: Mother in Kerala (INR wallet).
-- Story: Ravi sends INR 15,000 instantly with zero fees.
+---
 
-## Architecture Summary
-- Frontend: Next.js 14 (App Router) + TypeScript
-- Styling: Tailwind CSS + shadcn/ui
-- Backend: Next.js API routes + Server Actions
-- Database: Supabase Postgres with RLS
-- Auth: Supabase Auth (magic link + phone OTP)
-- FX: exchangerate.host API (cached hourly)
-- AI: Anthropic Claude API
-- Ledger: SHA-256 hash chain + Polygon Amoy anchoring
-- Hosting: AWS
+## Stack
 
-## Key Features
-- Wallet-to-wallet transfers with live FX conversion.
-- Hash chain verification for every transaction.
-- Admin compliance dashboard with AML flags.
-- Multilingual UI (English + Hindi).
-- PWA for mobile-first installation.
+- Next.js 16 (App Router) · React 19 · TypeScript
+- Tailwind CSS v4 + manual shadcn/ui setup
+- Supabase (Postgres + Auth + RLS)
+- Anthropic Claude API for AI insights
+- ethers.js + Polygon Amoy for ledger anchoring
+- next-intl for EN + Hindi
 
-## Data and Compliance Highlights
-- Core tables: profiles, wallets, transactions, fx_rates_cache, aml_flags, polygon_anchors.
-- Row Level Security ensures users only see their own data.
-- AML checks run on transfers with audit trail records.
+---
 
-## Project Structure
-- app/: routes and API endpoints
-- components/: UI components and widgets
-- lib/: core business logic (FX, transfer, chain, AI)
-- contracts/: Polygon anchoring contract
-- scripts/: seed data and contract deployment
-- public/: PWA manifest, icons, and locales
+## First-run setup
 
-## Demo Flow (3 minutes)
-1. Open app via QR code.
-2. Login as Ravi.
-3. Switch language to Hindi.
-4. Tap Send home.
-5. Enter INR 15,000 for mother.
-6. Review FX breakdown (rate, fee, amount received).
-7. Confirm transfer.
-8. View hash chain receipt and PolygonScan link.
-9. Show AI insight card.
-10. Open micro-investment screen.
-11. Switch to admin view.
+```powershell
+# 1. Copy the env template and fill in real values
+copy .env.local.example .env.local
 
-## Revenue Model
-- Transparent FX spread (0.5% to 1%).
-- Float interest on pooled balances.
-- Premium features.
+# 2. Push the schema to your Supabase project
+#    Open Supabase SQL editor and paste supabase/migrations/001_initial_schema.sql
+#    OR use the Supabase CLI:
+#       supabase link --project-ref <ref>
+#       supabase db push
 
-## Team Allocation
-- P1: Backend (DB, RLS, transfer RPC, hash chain, AML, FX caching).
-- P2: Frontend (UI screens, PWA, i18n, navigation).
-- P3: AI and blockchain (Claude integration, Solidity contract, anchoring cron).
-- P4: Design and pitch (visuals, demo data, deck, README).
+# 3. Deploy the Polygon contract
+#    Open contracts/LedgerAnchor.sol in Remix, deploy to Polygon Amoy.
+#    Paste the contract address into LEDGER_ANCHOR_CONTRACT in .env.local.
 
-## Timeline (24 Hours)
-- Hour 0-1: Setup and alignment.
-- Hour 1-6: Parallel foundation.
-- Hour 6-12: End-to-end transfer working.
-- Hour 12-16: AI insights and live FX.
-- Hour 16-20: Compliance and deep features.
-- Hour 20-22: Polish and deploy.
-- Hour 22-24: Demo prep and rehearsal.
+# 4. (Optional) Seed demo data
+#    npx tsx scripts/seed.ts
 
-## Risks and Mitigations
-- RLS misconfig: test with two accounts early.
-- Polygon anchor failure: get faucet funds early.
-- FX API limits: cache and fallback rate.
-- Demo failure: backup video and real-device testing.
-
-## Setup (Hour 0)
-```bash
-npx create-next-app@latest fintech-wallet --typescript --tailwind --app
-cd fintech-wallet
-
-npm install @supabase/supabase-js @supabase/ssr
-npm install @anthropic-ai/sdk
-npm install ethers
-npx shadcn@latest init
-npx shadcn@latest add button input card dialog form toast
-
-npm install next-pwa
-npm install next-intl
+# 5. Run the dev server
+npm run dev
 ```
 
-## Environment Variables
-```
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-ANTHROPIC_API_KEY=
-POLYGON_AMOY_RPC=https://rpc-amoy.polygon.technology
-POLYGON_PRIVATE_KEY=
-LEDGER_ANCHOR_CONTRACT=
-```
+Open <http://localhost:3000>.
 
-## Success Criteria
-- Demo URL works on mobile via QR code.
-- Full transfer flow under 30 seconds.
-- FX breakdown shows live rate and margin.
-- Polygon anchor visible on PolygonScan.
-- AI insight generated in user language.
-- Admin dashboard shows compliance metadata.
+---
+
+## Team ownership (see `docs/implementation.md` section 6)
+
+| Person | Owns |
+|---|---|
+| **P1** Backend | `supabase/`, `lib/transfer.ts`, `lib/chain.ts`, `lib/fx.ts`, `lib/aml.ts`, `app/api/transfer`, `app/api/fx` |
+| **P2** Frontend | `app/(app)/`, `app/(auth)/`, `components/`, `lib/i18n/`, mobile-frame, PWA |
+| **P3** AI + chain | `lib/ai.ts`, `lib/polygon.ts`, `contracts/`, `app/api/insights`, `app/api/anchor` |
+| **P4** Design + pitch | UI polish, `scripts/seed.ts`, demo deck, README, demo video |
+
+**Rule:** one person, one ownership area. P4 helps wherever needed once design system is locked.
+
+---
+
+## Key routes
+
+- `/` — landing (redirects to `/home` if signed in)
+- `/login`, `/signup` — auth flows (magic link / phone OTP — wire to Supabase)
+- `/home` — wallet balance dashboard
+- `/send` → `/send/confirm` — the demo hero (FX breakdown)
+- `/history`, `/history/[id]` — tx list + hash chain receipt
+- `/insights` — AI insight cards
+- `/invest` — round-up jar + SIP starter
+- `/kyc`, `/settings` — onboarding + account
+- `/compliance`, `/pools`, `/chain` — admin dashboards
+
+---
+
+## What's wired vs stubbed
+
+| Area | Status |
+|---|---|
+| Folder structure + all 18 route stubs | ✅ |
+| Hash chain logic (`lib/chain.ts`) | ✅ real implementation |
+| AML rules (`lib/aml.ts`) | ✅ real rules |
+| FX rate fetcher with cache + fallback (`lib/fx.ts`) | ✅ real, needs Supabase |
+| Transfer business logic (`lib/transfer.ts`) | ✅ real, needs Supabase + RPC |
+| Polygon anchoring (`lib/polygon.ts`) | ✅ real, needs deployed contract |
+| Claude AI insight (`lib/ai.ts`) | ✅ real, needs ANTHROPIC_API_KEY |
+| API routes (`/api/*`) | ✅ all wired |
+| SQL schema + RLS + execute_transfer RPC | ✅ migration ready |
+| Solidity contract | ✅ ready to deploy |
+| Auth (Supabase signInWithOtp) | ⏳ form is static — wire in `(auth)/login` |
+| Demo data seed script | ⏳ skeleton only |
+| Hindi translation strings | ⏳ |
+| Webcam KYC selfie | ⏳ |
+| PWA service worker | ⏳ (manifest done; SW deferred to hour 20) |
+
+---
+
+## Cut list (drop in this order if behind)
+
+1. Voice command via Web Speech API
+2. Second language fully wired
+3. Webcam KYC selfie (use file upload)
+4. Round-up jar animation
+5. Polygon anchoring (keep hash chain only)
+
+**Never cut:** end-to-end transfer flow, FX breakdown screen, AI insight, KYC mock, admin dashboard.
