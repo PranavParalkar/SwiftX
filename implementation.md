@@ -96,7 +96,7 @@ create table profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text not null,
   phone text,
-  country_code text not null,        -- 'AE', 'IN', 'US'
+  country_code text not null,        -- 'AE', 'IN', 'US'  
   language text default 'en',         -- 'en', 'hi'
   kyc_status text default 'pending',  -- 'pending', 'verified', 'rejected'
   kyc_document_url text,
