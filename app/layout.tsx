@@ -1,37 +1,30 @@
-import type { Metadata, Viewport } from "next";
-import "./globals.css";
+import type { Metadata } from 'next'
+import { Plus_Jakarta_Sans } from 'next/font/google'
+import './globals.css'
+import { ThemeProvider } from '@/components/ThemeProvider'
+import { LangProvider } from '@/lib/i18n'
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-jakarta',
+})
 
 export const metadata: Metadata = {
-  title: "FinTech Wallet — Zero-fee Remittance",
-  description:
-    "Send money home with no fees, transparent FX, and AI-powered financial guidance.",
-  manifest: "/manifest.json",
-  applicationName: "FinTech Wallet",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "FinTech Wallet",
-  },
-};
+  title: 'SwiftX — Borderless Money Movement',
+  description: 'SwiftX: a modern multi-currency wallet, instant global transfers, and smart financial insights.',
+}
 
-export const viewport: Viewport = {
-  themeColor: "#0a0a0a",
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="min-h-full bg-neutral-100 dark:bg-neutral-950">
-        {children}
+    <html lang="en" suppressHydrationWarning className={jakarta.variable}>
+      <body className="sx-canvas antialiased">
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <LangProvider>
+            {children}
+          </LangProvider>
+        </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }
